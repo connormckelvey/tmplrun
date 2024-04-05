@@ -151,7 +151,7 @@ func newRenderCommand(env *cmd.Environment) *cli.Command {
 		&cli.Command{
 			Name:    "render",
 			Aliases: []string{"r"},
-			Usage:   "todo",
+			Usage:   "renders the template with given props",
 		},
 		cmd.UseHandler(
 			newRenderHandler(env),
@@ -161,17 +161,17 @@ func newRenderCommand(env *cmd.Environment) *cli.Command {
 				}
 			}),
 			cmd.UseStringFlag(
-				&cli.StringFlag{Name: "props", Aliases: []string{"p"}, Usage: "TODO"},
+				&cli.StringFlag{Name: "props", Aliases: []string{"p"}, Usage: "file containing props object as JSON"},
 				func(p *RenderParams, s string) {
 					p.PropsFile = s
 				}),
 			cmd.UseStringFlag(
-				&cli.StringFlag{Name: "output", Aliases: []string{"o"}, Usage: "TODO"},
+				&cli.StringFlag{Name: "output", Aliases: []string{"o"}, Usage: "output location (default: stdout)"},
 				func(p *RenderParams, s string) {
 					p.Output = s
 				}),
 			cmd.UseBoolFlag(
-				&cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "TODO"},
+				&cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "accept overwrite warning and bypass prompt"},
 				func(p *RenderParams, b bool) {
 					p.Overwrite = b
 				}),

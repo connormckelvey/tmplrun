@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/connormckelvey/tmplrun/internal/cmd"
+	"github.com/urfave/cli/v2"
 
 	"github.com/spf13/afero"
 )
@@ -26,6 +27,10 @@ func main() {
 
 	cliApp := cmd.NewCLIApp(
 		cmd.UseEnvironment(env),
+		func(a *cli.App) {
+			a.DefaultCommand = "render"
+			a.Usage = "Bring your own language templating engine"
+		},
 		cmd.UseCommands(
 			newRenderCommand(env),
 		),

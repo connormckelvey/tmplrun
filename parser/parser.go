@@ -57,10 +57,7 @@ func (p *Parser) Parse() (*ast.Document, error) {
 			stack.Push(templateNode)
 		case token.CLOSE:
 			if templateNode, ok := currentNode.(*ast.TemplateNode); !ok {
-				currentNode.Append(&ast.ErrorNode{
-					Token: p.curToken,
-					Err:   errors.New("TODO"),
-				})
+				return nil, errors.New("unexpected node")
 			} else if isClosingTag(templateNode.Token, p.curToken) {
 				templateNode.Closed = true
 				stack.Pop()
@@ -83,7 +80,6 @@ func (p *Parser) nextToken() (err error) {
 	p.peekToken = next
 
 	return nil
-	// TODO log / handle errors from lexer.Errors
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {
