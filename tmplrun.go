@@ -42,14 +42,6 @@ func (tr *TMPLRun) Render(input *RenderInput) (string, error) {
 	return result, err
 }
 
-func (tr *TMPLRun) Run(reader io.Reader, props map[string]any) (string, error) {
-	doc, err := tr.parse(reader)
-	if err != nil {
-		return "", err
-	}
-	return tr.render(".", doc, props)
-}
-
 func (tr *TMPLRun) parse(r io.Reader) (*ast.Document, error) {
 	lex := lexer.New(r)
 	par := parser.New(lex)

@@ -12,7 +12,6 @@ import (
 
 	"github.com/connormckelvey/tmplrun"
 	"github.com/connormckelvey/tmplrun/internal/cmd"
-	"github.com/connormckelvey/tmplrun/internal/fsys"
 	"github.com/connormckelvey/tmplrun/internal/prompt"
 
 	"github.com/spf13/afero"
@@ -22,7 +21,6 @@ import (
 type RenderParams struct {
 	Entrypoint string
 	PropsFile  string
-	Include    []string
 	Output     string
 	Overwrite  bool
 }
@@ -100,27 +98,11 @@ func (h *RenderHandler) Action(ctx *cmd.HandlerContext[RenderParams], params *Re
 		return err
 	}
 
-	readOnlyFS := afero.NewReadOnlyFs(h.env.FileSystem)
-	limitedFS, err := fsys.NewLimitedFS(
-		afero.NewIOFS(readOnlyFS),
-		fsys.WithGlobs(params.Include),
-	)
-	if err != nil {
-		return err
-	}
-
-	f, err := limitedFS.Open(filepath.Clean(params.Entrypoint))
-	if err != nil {
-		return fmt.Errorf("unable to open entrypoint: %w", err)
-	}
-	defer func() {
-		if err := f.Close(); err != nil {
-			ctx.Log.Err(err).Msgf("error closing file: %s", params.Entrypoint)
-		}
-	}()
-
-	tmpl := tmplrun.New(limitedFS)
-	result, err := tmpl.Run(f, props)
+	tmpl := tmplrun.New(afero.NewIOFS(h.env.FileSystem))
+	result, err := tmpl.Render(&tmplrun.RenderInput{
+		Entrypoint: filepath.Clean(params.Entrypoint),
+		Props:      props,
+	})
 	if err != nil {
 		return err
 	}
@@ -182,11 +164,6 @@ func newRenderCommand(env *cmd.Environment) *cli.Command {
 				&cli.StringFlag{Name: "props", Aliases: []string{"p"}, Usage: "TODO"},
 				func(p *RenderParams, s string) {
 					p.PropsFile = s
-				}),
-			cmd.UseStringSliceFlag(
-				&cli.StringSliceFlag{Name: "include", Aliases: []string{"i"}, Usage: "TODO"},
-				func(p *RenderParams, s []string) {
-					p.Include = s
 				}),
 			cmd.UseStringFlag(
 				&cli.StringFlag{Name: "output", Aliases: []string{"o"}, Usage: "TODO"},
