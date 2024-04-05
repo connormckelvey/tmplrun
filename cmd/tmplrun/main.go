@@ -25,10 +25,11 @@ func main() {
 	}
 
 	cliApp := cmd.NewCLIApp(
-		cmd.UseStandardIO(env),
+		cmd.UseEnvironment(env),
 		cmd.UseCommands(
 			newRenderCommand(env),
 		),
+		cmd.UseDefaultCommand("render"),
 	)
 
 	app := cmd.NewApplication(env, cliApp)

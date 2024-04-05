@@ -14,7 +14,7 @@ func NewCLIApp(options ...CLIAppOption) *cli.App {
 	return app
 }
 
-func UseStandardIO(env *Environment) CLIAppOption {
+func UseEnvironment(env *Environment) CLIAppOption {
 	return func(a *cli.App) {
 		a.Reader = env.Reader
 		a.Writer = env.Writer
@@ -25,5 +25,11 @@ func UseStandardIO(env *Environment) CLIAppOption {
 func UseCommands(commands ...*cli.Command) CLIAppOption {
 	return func(a *cli.App) {
 		a.Commands = append(a.Commands, commands...)
+	}
+}
+
+func UseDefaultCommand(command string) CLIAppOption {
+	return func(a *cli.App) {
+		a.DefaultCommand = command
 	}
 }
