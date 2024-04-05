@@ -1,0 +1,9 @@
+{
+    "NodeType": "Document",
+    "Children": [
+        {
+            "NodeType": "TextNode",
+            "Text": "lorem ipsum\n"
+        }
+    ]
+}

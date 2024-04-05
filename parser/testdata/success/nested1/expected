@@ -1,0 +1,31 @@
+{
+    "NodeType": "Document",
+    "Children": [
+        {
+            "NodeType": "TemplateNode",
+            "Token": "\u003c%",
+            "Children": [
+                {
+                    "NodeType": "TextNode",
+                    "Text": " console.log(\" "
+                },
+                {
+                    "NodeType": "TemplateNode",
+                    "Token": "\u003c%",
+                    "Children": [
+                        {
+                            "NodeType": "TextNode",
+                            "Text": "  lorem(\"ipsum\") "
+                        }
+                    ],
+                    "Closed": true
+                },
+                {
+                    "NodeType": "TextNode",
+                    "Text": " \") "
+                }
+            ],
+            "Closed": true
+        }
+    ]
+}

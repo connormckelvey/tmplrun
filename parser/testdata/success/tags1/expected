@@ -1,0 +1,16 @@
+{
+    "NodeType": "Document",
+    "Children": [
+        {
+            "NodeType": "TemplateNode",
+            "Token": "\u003c%",
+            "Children": [
+                {
+                    "NodeType": "TextNode",
+                    "Text": " console.log(\"lorem ipsum\") "
+                }
+            ],
+            "Closed": true
+        }
+    ]
+}
