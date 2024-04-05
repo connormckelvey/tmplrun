@@ -38,12 +38,7 @@ func (env *Environment) hasErrors() bool {
 }
 
 func (env *Environment) Template(name string, props map[string]any) string {
-	file := env.Include(name)
-	if file == "" || env.hasErrors() {
-		return ""
-	}
-
-	res, err := env.hooks.Render(file, props)
+	res, err := env.hooks.Render(name, props)
 	if err != nil {
 		env.errors = append(env.errors, err)
 		return ""

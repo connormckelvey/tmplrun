@@ -1,1 +1,1 @@
-<% template("./includes/include1", { message: message.split("").reverse().join("") }) %>
+<% template("includes/include1", { message: message.split("").reverse().join("") }) %>

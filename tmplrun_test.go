@@ -48,10 +48,13 @@ func TestTMPLRun(t *testing.T) {
 			entry, props, expected := test.entrypoint(t), test.props(t), test.expected(t)
 			defer testutil.MustCloseFile(t, entry)
 
-			fsys := os.DirFS(test.path("input"))
+			fsys := os.DirFS(".")
 			tmpl := New(fsys)
 
-			result, err := tmpl.Run(entry, props)
+			result, err := tmpl.Render(&RenderInput{
+				Entrypoint: test.path("input/entrypoint"),
+				Props:      props,
+			})
 			assert.NoError(t, err)
 
 			assert.Equal(t, string(expected), result)

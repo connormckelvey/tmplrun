@@ -1,21 +1,19 @@
 package tmplrun
 
 import (
+	"bytes"
 	"io/fs"
 	"path/filepath"
-	"strings"
-
-	"github.com/connormckelvey/tmplrun/internal/containers"
 )
 
 type hooks struct {
-	tr        *TMPLRun
-	fileStack *containers.Stack[string]
+	tr          *TMPLRun
+	currentFile string
 }
 
 func (th *hooks) resolve(name string) string {
 	// relative to importing file
-	currentDir := filepath.Dir(th.fileStack.Peek())
+	currentDir := filepath.Dir(th.currentFile)
 	return filepath.Join(currentDir, name)
 }
 
@@ -28,10 +26,16 @@ func (th *hooks) Include(name string) (string, error) {
 	return string(b), nil
 }
 
-func (th *hooks) Render(src string, props map[string]any) (string, error) {
-	doc, err := th.tr.parse(strings.NewReader(src))
+func (th *hooks) Render(name string, props map[string]any) (string, error) {
+	rel := th.resolve(name)
+	src, err := fs.ReadFile(th.tr.fs, rel)
 	if err != nil {
 		return "", err
 	}
-	return th.tr.render(doc, props)
+
+	doc, err := th.tr.parse(bytes.NewReader(src))
+	if err != nil {
+		return "", err
+	}
+	return th.tr.render(rel, doc, props)
 }
