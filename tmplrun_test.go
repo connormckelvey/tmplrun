@@ -1,6 +1,7 @@
 package tmplrun
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"os"
@@ -51,13 +52,14 @@ func TestTMPLRun(t *testing.T) {
 			fsys := os.DirFS(".")
 			tmpl := New(fsys)
 
-			result, err := tmpl.Render(&RenderInput{
+			var result bytes.Buffer
+			err := tmpl.Render(&result, &RenderInput{
 				Entrypoint: test.path("input/entrypoint"),
 				Props:      props,
 			})
 			assert.NoError(t, err)
 
-			assert.Equal(t, string(expected), result)
+			assert.Equal(t, string(expected), result.String())
 
 		})
 	}

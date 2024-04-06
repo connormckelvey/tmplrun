@@ -24,22 +24,22 @@ type RenderInput struct {
 	Props      map[string]any
 }
 
-func (tr *TMPLRun) Render(input *RenderInput) (string, error) {
+func (tr *TMPLRun) Render(w io.Writer, input *RenderInput) error {
 	f, err := tr.fs.Open(input.Entrypoint)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer f.Close()
 
 	doc, err := tr.parse(f)
 	if err != nil {
-		return "", err
+		return err
 	}
-	result, err := tr.render(input.Entrypoint, doc, input.Props)
+	err = tr.render(w, input.Entrypoint, doc, input.Props)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return result, err
+	return nil
 }
 
 func (tr *TMPLRun) parse(r io.Reader) (*ast.Document, error) {
@@ -48,12 +48,20 @@ func (tr *TMPLRun) parse(r io.Reader) (*ast.Document, error) {
 	return par.Parse()
 }
 
-func (tr *TMPLRun) render(currentFile string, doc *ast.Document, props map[string]any) (string, error) {
+func (tr *TMPLRun) render(w io.Writer, currentFile string, doc *ast.Document, props map[string]any) error {
 	hooks := &hooks{
 		tr:          tr,
 		currentFile: currentFile,
 	}
-	return evaluator.
-		New(driver.NewGoja(), hooks).
-		Render(doc, evaluator.NewEnvironment(tr.fs, props, hooks))
+	ev := evaluator.New(driver.NewGoja(), hooks)
+	res, err := ev.Render(doc, evaluator.NewEnvironment(tr.fs, props, hooks))
+	if err != nil {
+		return err
+	}
+	_, err = w.Write([]byte(res))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

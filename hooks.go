@@ -37,5 +37,11 @@ func (th *hooks) Render(name string, props map[string]any) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return th.tr.render(rel, doc, props)
+	var buf bytes.Buffer
+	err = th.tr.render(&buf, rel, doc, props)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
 }
