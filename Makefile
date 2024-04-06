@@ -7,7 +7,7 @@ default: all
 all: fmt lint test build
 
 build: deps
-	 go build -o bin/tmplrun ./cmd/
+	 go build -o bin/tmplrun ./cmd/tmplrun/
 
 fmt:
 	$(info * [checking formatting] **************************************)

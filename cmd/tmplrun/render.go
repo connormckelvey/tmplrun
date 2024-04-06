@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -99,7 +100,9 @@ func (h *RenderHandler) Action(ctx *cmd.HandlerContext[RenderParams], params *Re
 	}
 
 	tmpl := tmplrun.New(afero.NewIOFS(h.env.FileSystem))
-	result, err := tmpl.Render(&tmplrun.RenderInput{
+
+	var result bytes.Buffer
+	err = tmpl.Render(&result, &tmplrun.RenderInput{
 		Entrypoint: filepath.Clean(params.Entrypoint),
 		Props:      props,
 	})
@@ -108,8 +111,15 @@ func (h *RenderHandler) Action(ctx *cmd.HandlerContext[RenderParams], params *Re
 	}
 
 	if params.Output == "" {
-		_, err := fmt.Fprintln(output, result)
-		return err
+		_, err := io.Copy(output, &result)
+		if err != nil {
+			return err
+		}
+		_, err = fmt.Fprintln(output)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 
 	outputPath := filepath.Dir(params.Output)
@@ -132,7 +142,7 @@ func (h *RenderHandler) Action(ctx *cmd.HandlerContext[RenderParams], params *Re
 		return err
 	}
 
-	if _, err := file.WriteString(result); err != nil {
+	if _, err := io.Copy(file, &result); err != nil {
 		return err
 	}
 
