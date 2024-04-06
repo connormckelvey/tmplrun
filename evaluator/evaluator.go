@@ -6,11 +6,13 @@ import (
 	"github.com/connormckelvey/tmplrun/ast"
 )
 
+// Evaluator represents a template evaluator.
 type Evaluator struct {
 	driver Driver
 	hooks  HooksAPI
 }
 
+// New creates a new instance of Evaluator with the given driver and hooks.
 func New(driver Driver, hooks HooksAPI) *Evaluator {
 	return &Evaluator{
 		driver: driver,
@@ -18,6 +20,7 @@ func New(driver Driver, hooks HooksAPI) *Evaluator {
 	}
 }
 
+// Render renders the given abstract syntax tree document with the provided environment.
 func (r *Evaluator) Render(doc *ast.Document, env *Environment) (string, error) {
 	return r.renderChildren(doc, env)
 }
@@ -27,8 +30,6 @@ func (r *Evaluator) renderChildren(n ast.Node, env *Environment) (string, error)
 	for _, child := range n.Children() {
 		switch n := child.(type) {
 		case *ast.TextNode:
-			code.WriteString(n.Token.Literal)
-		case *ast.ErrorNode:
 			code.WriteString(n.Token.Literal)
 		case *ast.TemplateNode:
 			result, err := r.renderTemplateNode(n, env)

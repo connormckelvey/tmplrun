@@ -9,14 +9,15 @@ import (
 	"github.com/connormckelvey/tmplrun/token"
 )
 
+// Parser represents a template parser.
 type Parser struct {
-	l      *lexer.Lexer
-	errors []string
-
+	l         *lexer.Lexer
+	errors    []string
 	curToken  *token.Token
 	peekToken *token.Token
 }
 
+// New creates a new instance of Parser with the given lexer.
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l:      l,
@@ -35,6 +36,7 @@ func (p *Parser) init() error {
 	return nil
 }
 
+// Parse parses the input template and returns the abstract syntax tree (AST) document.
 func (p *Parser) Parse() (*ast.Document, error) {
 	if err := p.init(); err != nil {
 		return nil, err

@@ -8,12 +8,14 @@ import (
 	"github.com/connormckelvey/tmplrun/token"
 )
 
+// Lexer represents a template lexer.
 type Lexer struct {
 	source *sourceReader
 	rules  []Rule
 	once   *sync.Once
 }
 
+// New creates a new instance of Lexer with the given source reader and default rules.
 func New(source io.Reader) *Lexer {
 	return NewWithRules(
 		source,
@@ -24,6 +26,7 @@ func New(source io.Reader) *Lexer {
 	)
 }
 
+// NewWithRules creates a new instance of Lexer with the given source reader and custom rules.
 func NewWithRules(source io.Reader, rules ...Rule) *Lexer {
 	l := &Lexer{
 		source: newSourceReader(source),
@@ -40,6 +43,7 @@ func (l *Lexer) init() (err error) {
 	return err
 }
 
+// NextToken returns the next token from the input stream.
 func (l *Lexer) NextToken() (*token.Token, error) {
 	if err := l.init(); err != nil {
 		return nil, err

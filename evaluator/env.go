@@ -5,6 +5,7 @@ import (
 	"io/fs"
 )
 
+// Environment represents the environment for template evaluation.
 type Environment struct {
 	props  map[string]any
 	fs     fs.FS
@@ -12,6 +13,7 @@ type Environment struct {
 	hooks  HooksAPI
 }
 
+// NewEnvironment creates a new instance of Environment with the given parameters.
 func NewEnvironment(fsys fs.FS, props map[string]any, hooksAPI HooksAPI) *Environment {
 	return &Environment{
 		props: props,
@@ -20,10 +22,12 @@ func NewEnvironment(fsys fs.FS, props map[string]any, hooksAPI HooksAPI) *Enviro
 	}
 }
 
+// Props returns the properties associated with the environment.
 func (env *Environment) Props() map[string]any {
 	return env.props
 }
 
+// Include includes the template specified by name.
 func (env *Environment) Include(name string) string {
 	file, err := env.hooks.Include(name)
 	if err != nil {
@@ -37,6 +41,7 @@ func (env *Environment) hasErrors() bool {
 	return len(env.errors) > 0
 }
 
+// Template renders the template specified by name with the given properties.
 func (env *Environment) Template(name string, props map[string]any) string {
 	res, err := env.hooks.Render(name, props)
 	if err != nil {
