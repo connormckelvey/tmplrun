@@ -24,6 +24,14 @@ func (gd *gojaDriver) CreateContext(env *evaluator.Environment) (evaluator.Drive
 			return nil, err
 		}
 	}
+
+	err := env.RegisterHooks(func(name string, value any) error {
+		return vm.runtime.Set(name, value)
+	})
+
+	if err != nil {
+		return nil, err
+	}
 	// Set built-in functions.
 	if err := vm.runtime.Set("include", env.Include); err != nil {
 		return nil, err
@@ -36,6 +44,7 @@ func (gd *gojaDriver) CreateContext(env *evaluator.Environment) (evaluator.Drive
 	}); err != nil {
 		return nil, err
 	}
+
 	return vm, nil
 }
 
