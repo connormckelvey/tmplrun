@@ -10,5 +10,5 @@ type HooksAPI interface {
 
 // RegisterHooks represents an interface for registering custom hooks
 type RegisterHooks interface {
-	Register(func(name string, value any) error) error
+	Register(onError func(error), reg func(name string, value any) error) error
 }

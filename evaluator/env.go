@@ -52,13 +52,21 @@ func (env *Environment) Template(name string, props map[string]any) string {
 	return res
 }
 
+func (env *Environment) handleError(err error) {
+	if err != nil {
+		env.errors = append(env.errors, err)
+	}
+}
 func (env *Environment) RegisterHooks(register func(name string, value any) error) error {
 	reg, ok := env.hooks.(RegisterHooks)
 	if !ok {
 		return nil
 	}
-	if err := reg.Register(register); err != nil {
-		return err
-	}
+	reg.Register(env.handleError, func(name string, value any) error {
+		if err := register(name, value); err != nil {
+			return err
+		}
+		return nil
+	})
 	return nil
 }
